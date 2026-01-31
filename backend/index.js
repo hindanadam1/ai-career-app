@@ -1,6 +1,6 @@
 import express from "express";
 const app = express();
-import "./config/db.js"; //
+import "./config/db.js"; 
 
 app.use(express.json());
 
@@ -11,4 +11,5 @@ app.get("/", (req, res) => {
 
 app.listen(3001, () => {
   console.log("Serveur backend lancé sur http://localhost:3001");
-});
+}); 
+
