@@ -1,44 +1,65 @@
+import { Link } from "react-router-dom";
+import { useState } from "react";
 function Login() {
-  return (
-    <div className="container vh-100 d-flex justify-content-center align-items-center">
-      <div
-        className="card bg-dark text-light p-4 shadow"
-        style={{ width: "420px" }}
-      >
-        <h3 className="text-center mb-4">
-          Accédez à votre <span className="text-primary">espace carrière IA</span>
-        </h3>
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
-        <form>
-          <div className="mb-3">
-            <label className="form-label">Email</label>
-            <input
-              type="email"
-              className="form-control bg-secondary text-light border-0"
-              placeholder="Veuillez saisir votre adresse e-mail"
-            />
-          </div>
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log(email, password);
+    };
+    return (
+        <div className="container vh-100 d-flex justify-content-center align-items-center">
+            <div
+                className="card bg-dark text-light p-4 shadow"
+                style={{ width: "420px" }}
+            >
+                <h3 className="text-center mb-4">
+                    Accédez à votre <span className="text-primary">espace carrière IA</span>
+                </h3>
 
-          <div className="mb-4">
-            <label className="form-label">Mot de passe</label>
-            <input
-              type="password"
-              className="form-control bg-secondary text-light border-0"
-              placeholder="Veuillez saisir votre mot de passe"
-            />
-          </div>
+                <form onSubmit={handleSubmit}>
+                    <div className="mb-3">
+                        <label className="form-label">Email</label>
+                        <input
+                          
+                            type="email"
+                            className="form-control bg-secondary text-light border-0"
+                            placeholder="Veuillez saisir votre adresse e-mail"
+                              value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                    </div>
 
-          <button
-            type="submit"
-            className="btn btn-primary w-100 fw-bold"
-          >
-            Se connecter
-          </button>
-        </form>
+                    <div className="mb-4">
+                        <label className="form-label">Mot de passe</label>
+                        <input
+                            type="password"
+                            className="form-control bg-secondary text-light border-0"
+                            placeholder="Veuillez saisir votre mot de passe"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                    </div>
 
-      </div>
-    </div>
-  );
+                    <button
+                        type="submit"
+                        className="btn btn-primary w-100 fw-bold"
+                    >
+                        Se connecter
+                    </button> <br /> <br />
+
+                    <p className="text-primary" >
+                        Pas de compte ? <Link to="/register">S'inscrire</Link>
+                    </p>
+                    <p className="text-center mt-4">
+                        <Link to='/dashboard' className="text-primary text-decoration-none fw-semibold">Accéder au tableau de bord</Link>
+                    </p>
+                </form>
+
+            </div>
+        </div>
+    );
 }
 
 export default Login;
