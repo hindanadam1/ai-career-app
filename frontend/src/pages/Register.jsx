@@ -1,13 +1,29 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Register() {
     const [nom, setNom] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const handleSubmit = (e) => {
+    const navigate = useNavigate();
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(nom, email, password);
+
+        await fetch("http://localhost:3001/api/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                nom: nom,
+                email: email,
+                password: password,
+            }),
+        });
+
+        navigate("/");
     };
+
 
     return (
         <div className="container vh-100 d-flex justify-content-center align-items-center">
