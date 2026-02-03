@@ -1,13 +1,28 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log(email, password);
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const res = await fetch("http://localhost:3001/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!res.ok) return;
+
+    const data = await res.json();
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("nom", data.nom);
+
+    navigate("/dashboard");
+  };
     return (
         <div className="container vh-100 d-flex justify-content-center align-items-center">
             <div
