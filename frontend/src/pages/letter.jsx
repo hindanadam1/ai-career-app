@@ -22,7 +22,7 @@ function Letter() {
       atob(localStorage.getItem("token").split(".")[1])
     ).id;
 
-    const res = await fetch("http://localhost:3001/api/generate-letter", {
+    const res = await fetch("http://localhost:3001/api/ai/generate-letter", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...form, userId }),

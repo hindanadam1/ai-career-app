@@ -30,7 +30,7 @@ function CV() {
     const payload = JSON.parse(atob(token.split(".")[1]));
     const userId = payload.id;
 
-    const res = await fetch("http://localhost:3001/api/generate-cv", {
+    const res = await fetch("http://localhost:3001/api/ai/generate-cv", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...form, userId }),

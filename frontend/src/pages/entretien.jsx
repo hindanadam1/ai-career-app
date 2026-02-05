@@ -13,7 +13,7 @@ function Entretien() {
         const token = localStorage.getItem("token");
         const payload = JSON.parse(atob(token.split(".")[1]));
 
-        const res = await fetch("http://localhost:3001/api/generation-entretien", {
+        const res = await fetch("http://localhost:3001/api/ai/generation-entretien", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

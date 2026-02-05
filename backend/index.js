@@ -14,9 +14,10 @@ app.use(express.json());
 
 app.use(cors());
 app.use("/api", authRoutes);
-app.use("/api", aiRoutes);
-app.use("/api", entretienRoutes);
-app.use("./api" ,historiqueRoutes);
+app.use("/api/ai/", aiRoutes);
+app.use("/api/ai/", entretienRoutes);
+app.use("/api", historiqueRoutes);
+
 
 
 app.listen(3001, () => {

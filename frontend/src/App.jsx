@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import CV from "./pages/CV";
 import Letter from "./pages/letter";
 import Entretien from  "./pages/entretien" ;
+import History from "./pages/historique";
 function App() {
   return (
     <BrowserRouter>
@@ -15,6 +16,7 @@ function App() {
         <Route path="/cv" element={<CV />} />
        <Route path="/lettre" element={<Letter />} />
       <Route path="/entretien" element={<Entretien />} />
+   <Route path="/historique" element={< History/>} />
       </Routes>
     </BrowserRouter>
   );
