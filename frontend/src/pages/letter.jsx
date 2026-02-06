@@ -38,16 +38,19 @@ function Letter() {
 
       <form onSubmit={handleSubmit}>
         <input
+        type="text"
           name="poste"
           placeholder="Poste"
           onChange={handleChange}
         />
         <input
+        type="text"
           name="entreprise"
           placeholder="Entreprise"
           onChange={handleChange}
         />
         <textarea
+         type="text"
           name="profil"
           placeholder="Profil du candidat"
           onChange={handleChange}

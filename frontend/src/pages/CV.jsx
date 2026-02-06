@@ -45,10 +45,10 @@ function CV() {
       <h2>Génération de CV</h2>
 
       <form onSubmit={handleSubmit}>
-        <input name="prenom" placeholder="Prénom" onChange={handleChange} />
-        <input name="nom" placeholder="Nom" onChange={handleChange} />
-        <input name="poste" placeholder="Poste recherché" onChange={handleChange} />
-        <textarea name="competences" placeholder="Compétences" onChange={handleChange} />
+        <input type="text" name="prenom" placeholder="Prénom" onChange={handleChange} />
+        <input type="text" name="nom" placeholder="Nom" onChange={handleChange} />
+        <input type="text" name="poste" placeholder="Poste recherché" onChange={handleChange} />
+        <textarea  name="competences" placeholder="Compétences" onChange={handleChange} />
         <textarea name="experience" placeholder="Expériences" onChange={handleChange} /> <br />
         <button className="btn btn-primary mt-2">Générer</button>
         <br /> <br />
