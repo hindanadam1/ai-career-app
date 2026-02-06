@@ -18,6 +18,7 @@ function Letter() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // token
     const userId = JSON.parse(
       atob(localStorage.getItem("token").split(".")[1])
     ).id;
@@ -59,7 +60,7 @@ function Letter() {
         <button className="btn btn-primary mt-2">
           Générer la lettre
         </button> <br /> <br />
-                  <button
+         <button
           className="btn btn-outline-primary"
           onClick={() => navigate("/Dashboard")}
         > Retourne au Dashboard </button>

@@ -65,7 +65,7 @@ Cordialement,
 
     res.json({ letter });
   } catch (error) {
-  console.error("❌ ERREUR GENERATE CV :", error);
+  console.error("ERREUR GENERATE CV :", error);
   res.status(500).json({ message: "Erreur serveur" });
 }
 });

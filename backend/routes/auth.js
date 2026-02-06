@@ -47,11 +47,14 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ message: "Identifiants incorrects" });
     }
 
+// generation de token 
+
     const token = jwt.sign(
       { id: user.id, nom: user.nom },
       "SECRET_KEY"
     );
 
+    // les information qui sont dans le token envoyé au front 
     res.json({
       token,
       nom: user.nom,

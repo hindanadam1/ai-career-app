@@ -69,9 +69,7 @@ function Login() {
                     <p className="text-primary" >
                         Pas de compte ? <Link to="/register">S'inscrire</Link>
                     </p>
-                    <p className="text-center mt-4">
-                        <Link to='/dashboard' className="text-primary text-decoration-none fw-semibold">Accéder au tableau de bord</Link>
-                    </p>
+                 
                 </form>
 
             </div>
