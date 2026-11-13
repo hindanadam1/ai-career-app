@@ -1,71 +1,92 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import AppLayout from "../components/AppLayout";
+import AppIcon from "../components/AppIcon";
+import { apiUrl } from "../utils/api";
+import { getUserFromToken } from "../utils/auth";
 
 function CV() {
   const [result, setResult] = useState("");
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [form, setForm] = useState({ prenom: "", nom: "", poste: "", competences: "", experience: "" });
 
-  const [form, setForm] = useState({
-    prenom: "",
-    nom: "",
-    poste: "",
-    competences: "",
-    experience: "",
-  });
-// ... copy l'ancienne state 
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (event) => {
+    setForm((previous) => ({ ...previous, [event.target.name]: event.target.value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError("");
+    setResult("");
+    const user = getUserFromToken();
 
-    const token = localStorage.getItem("token");
-
-    if (!token) {
-      alert("Utilisateur non connecté");
+    if (!user?.id) {
+      setError("Votre session a expiré. Reconnectez-vous pour continuer.");
       return;
     }
 
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    const userId = payload.id;
-
-    const res = await fetch("http://localhost:3001/api/ai/generate-cv", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, userId }),
-    });
-
-    const data = await res.json();
-    setResult(data.cv);
+    try {
+      setLoading(true);
+      const response = await fetch(apiUrl("ai/generate-cv"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, userId: user.id }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "Le CV n’a pas pu être généré.");
+      setResult(data.cv || "");
+    } catch (requestError) {
+      setError(requestError.message || "Impossible de joindre le serveur.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="container mt-4 text-light">
-      <h2>Génération de CV</h2>
+    <AppLayout title="Votre CV, votre histoire" subtitle="Rassemblez les informations qui montrent ce que vous savez faire.">
+      <section className="form-panel">
+        <div className="panel-heading">
+          <div><p className="eyebrow">DOCUMENT PROFESSIONNEL</p><h2>Construisez votre profil</h2><p>Restez précis et mettez en avant ce qui compte pour le poste visé.</p></div>
+          <span className="panel-step">CV <span>01</span></span>
+        </div>
 
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="prenom" placeholder="Prénom" onChange={handleChange} />
-        <input type="text" name="nom" placeholder="Nom" onChange={handleChange} />
-        <input type="text" name="poste" placeholder="Poste recherché" onChange={handleChange} />
-        <textarea  name="competences" placeholder="Compétences" onChange={handleChange} />
-        <textarea name="experience" placeholder="Expériences" onChange={handleChange} /> <br />
-        <button className="btn btn-primary mt-2">Générer</button>
-        <br /> <br />
-        <button
-          className="btn btn-outline-primary"
-          onClick={() => navigate("/Dashboard")}
-        > Retourne au Dashboard </button>
+        <form className="app-form" onSubmit={handleSubmit}>
+          <div className="form-grid">
+            <div className="field-group">
+              <label htmlFor="cv-first-name">Prénom</label>
+              <input id="cv-first-name" name="prenom" className="form-control" placeholder="Ex. Amira" value={form.prenom} onChange={handleChange} autoComplete="given-name" required />
+            </div>
+            <div className="field-group">
+              <label htmlFor="cv-last-name">Nom</label>
+              <input id="cv-last-name" name="nom" className="form-control" placeholder="Ex. Martin" value={form.nom} onChange={handleChange} autoComplete="family-name" required />
+            </div>
+            <div className="field-group field-span">
+              <label htmlFor="cv-target-role">Poste recherché</label>
+              <input id="cv-target-role" name="poste" className="form-control" placeholder="Ex. Développeuse web en alternance" value={form.poste} onChange={handleChange} required />
+            </div>
+            <div className="field-group field-span">
+              <label htmlFor="cv-skills">Compétences <span>— séparez-les par des virgules</span></label>
+              <textarea id="cv-skills" name="competences" className="form-control" rows="3" placeholder="Ex. React, JavaScript, travail en équipe…" value={form.competences} onChange={handleChange} required />
+            </div>
+            <div className="field-group field-span">
+              <label htmlFor="cv-experience">Expériences et projets</label>
+              <textarea id="cv-experience" name="experience" className="form-control" rows="5" placeholder="Décrivez vos missions, projets, formations ou réalisations." value={form.experience} onChange={handleChange} required />
+              <small className="field-hint">Un projet de formation ou personnel peut aussi illustrer votre expérience.</small>
+            </div>
+          </div>
 
-      </form>
+          <div className="form-actions">
+            <button className="button button-primary" type="submit" disabled={loading}>
+              {loading ? <><span className="button-spinner" /> Création en cours…</> : <>Générer mon CV <AppIcon name="arrow" size={18} /></>}
+            </button>
+            <span className="form-secure-note"><AppIcon name="check" size={15} /> Vous pourrez relire le résultat avant de l’utiliser.</span>
+          </div>
+        </form>
 
-      {result && (
-        <pre className="bg-dark text-light p-3 mt-4">
-          {result}
-        </pre>
-      )}
-    </div>
+        {error && <p className="feedback feedback-error" role="alert">{error}</p>}
+        {result && <section className="generated-result" aria-live="polite"><div className="result-heading"><div><p className="eyebrow">VOTRE DOCUMENT</p><h3>CV généré</h3></div><span className="result-ready"><i /> Prêt à relire</span></div><pre className="result-block">{result}</pre></section>}
+      </section>
+    </AppLayout>
   );
 }
 

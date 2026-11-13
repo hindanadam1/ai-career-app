@@ -1,87 +1,85 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import AppLayout from "../components/AppLayout";
+import AppIcon from "../components/AppIcon";
+import { apiUrl } from "../utils/api";
+import { getUserFromToken } from "../utils/auth";
 
 function Letter() {
   const [result, setResult] = useState("");
-      const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [form, setForm] = useState({ poste: "", entreprise: "", profil: "" });
 
-  const [form, setForm] = useState({
-    poste: "",
-    entreprise: "",
-    profil: "",
-  });
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (event) => {
+    setForm((previous) => ({ ...previous, [event.target.name]: event.target.value }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError("");
+    setResult("");
+    const user = getUserFromToken();
 
-    // token
-    const userId = JSON.parse(
-      atob(localStorage.getItem("token").split(".")[1])
-    ).id;
+    if (!user?.id) {
+      setError("Votre session a expiré. Reconnectez-vous pour continuer.");
+      return;
+    }
 
-    const res = await fetch("http://localhost:3001/api/ai/generate-letter", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, userId }),
-    });
-
-    const data = await res.json();
-    setResult(data.letter);
+    try {
+      setLoading(true);
+      const response = await fetch(apiUrl("ai/generate-letter"), {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...form, userId: user.id }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || "La lettre n’a pas pu être générée.");
+      setResult(data.letter || "");
+    } catch (requestError) {
+      setError(requestError.message || "Impossible de joindre le serveur.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="container mt-4 text-light">
-      <h2>Lettre de motivation</h2>
+    <AppLayout title="Une lettre qui vous ressemble" subtitle="Reliez votre motivation au poste et à l’entreprise que vous souhaitez rejoindre.">
+      <section className="form-panel">
+        <div className="panel-heading">
+          <div><p className="eyebrow">LETTRE DE MOTIVATION</p><h2>Racontez votre motivation</h2><p>Quelques informations concrètes suffisent pour préparer une première version.</p></div>
+          <span className="panel-step">LETTRE <span>02</span></span>
+        </div>
 
-      <form onSubmit={handleSubmit}>
-        <input
-        type="text"
-          name="poste"
-          placeholder="Poste"
-          onChange={handleChange}
-        />
-        <input
-        type="text"
-          name="entreprise"
-          placeholder="Entreprise"
-          onChange={handleChange}
-        />
-        <textarea
-         type="text"
-          name="profil"
-          placeholder="Profil du candidat"
-          onChange={handleChange}
-        />
+        <form className="app-form" onSubmit={handleSubmit}>
+          <div className="form-grid">
+            <div className="field-group">
+              <label htmlFor="letter-role">Poste visé</label>
+              <input id="letter-role" name="poste" className="form-control" placeholder="Ex. Chargée de communication" value={form.poste} onChange={handleChange} required />
+            </div>
+            <div className="field-group">
+              <label htmlFor="letter-company">Entreprise</label>
+              <input id="letter-company" name="entreprise" className="form-control" placeholder="Ex. N-Vibe" value={form.entreprise} onChange={handleChange} required />
+            </div>
+            <div className="field-group field-span">
+              <label htmlFor="letter-profile">Votre profil et vos expériences</label>
+              <textarea id="letter-profile" name="profil" className="form-control" rows="8" placeholder="Présentez vos compétences, vos expériences ou un projet qui vous motive." value={form.profil} onChange={handleChange} required />
+              <small className="field-hint">Ajoutez un exemple réel qui montre votre contribution.</small>
+            </div>
+          </div>
 
-        <button className="btn btn-primary mt-2">
-          Générer la lettre
-        </button> <br /> <br />
-         <button
-          className="btn btn-outline-primary"
-          onClick={() => navigate("/Dashboard")}
-        > Retourne au Dashboard </button>
-      </form>
+          <div className="form-actions">
+            <button className="button button-primary" type="submit" disabled={loading}>
+              {loading ? <><span className="button-spinner" /> Rédaction en cours…</> : <>Générer ma lettre <AppIcon name="arrow" size={18} /></>}
+            </button>
+            <span className="form-secure-note"><AppIcon name="check" size={15} /> Relisez chaque détail avant l’envoi.</span>
+          </div>
+        </form>
 
-      {result && (
-        <pre className="bg-dark text-light p-3 mt-4">
-          {result}
-        </pre>
-      )}
-    </div>
+        {error && <p className="feedback feedback-error" role="alert">{error}</p>}
+        {result && <section className="generated-result" aria-live="polite"><div className="result-heading"><div><p className="eyebrow">VOTRE DOCUMENT</p><h3>Lettre générée</h3></div><span className="result-ready"><i /> Prête à relire</span></div><pre className="result-block">{result}</pre></section>}
+      </section>
+    </AppLayout>
   );
 }
 
 export default Letter;
-
-
-
-
-
-
-
-
-

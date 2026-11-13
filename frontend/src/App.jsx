@@ -4,8 +4,9 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import CV from "./pages/CV";
 import Letter from "./pages/letter";
-import Entretien from  "./pages/entretien" ;
+import Entretien from "./pages/entretien";
 import History from "./pages/historique";
+
 function App() {
   return (
     <BrowserRouter>
@@ -14,9 +15,9 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/cv" element={<CV />} />
-       <Route path="/lettre" element={<Letter />} />
-      <Route path="/entretien" element={<Entretien />} />
-   <Route path="/historique" element={< History/>} />
+        <Route path="/lettre" element={<Letter />} />
+        <Route path="/entretien" element={<Entretien />} />
+        <Route path="/historique" element={<History />} />
       </Routes>
     </BrowserRouter>
   );
